@@ -25,16 +25,24 @@ class ProductView(viewsets.ModelViewSet):
             return Products.objects.prefetch_related("product_images")
         return Products.objects.filter(stock__gt=0, status="active").prefetch_related("product_images")
 
-    def create(self, request, *args, **kwargs):
-        images = request.FILES.getlist("images")
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        product = serializer.save()
+    def perform_create(self, serializer):
+        images = self.request.FILES.getlist("images")
+        category = serializer.save()
 
         for image in images:
-            product.product_images.create(image=image)
+            category.product_images.create(image=image)
 
-        return Response(
-            self.get_serializer(product).data, status=status.HTTP_201_CREATED
-        )
+    def perform_update(self, serializer):
+        images = self.request.FILES.getlist("images")
+        category = serializer.save()
+
+        # Replace old images with new 
+        if images:
+            category.category_images.all().delete()
+            for image in images:
+                category.category_images.create(image=image)
+
+        # add new without deleting old
+        # for image in images:
+        #     category.category_images.create(image=image)

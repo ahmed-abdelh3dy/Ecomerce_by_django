@@ -1,4 +1,4 @@
-from .views import CategoriesViewSet
+from .views import CategoriesViewSet 
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
