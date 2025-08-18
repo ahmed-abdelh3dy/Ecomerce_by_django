@@ -46,4 +46,19 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         # for image in images:
         #     category.category_images.create(image=image)
 
+@extend_schema(tags=["category-images"])
+class CategoryImageViewSet(viewsets.ModelViewSet):
+    serializer_class = CategoryImageSerializer
+    queryset = CategoryImage.objects.all()
 
+    def get_permissions(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return [IsAuthenticated(), IsAdmin()]
+        return [IsAuthenticated()]
+
+    # def get_queryset(self):
+    #     if self.request.user.role == "admin":
+    #         return CategoryImage.objects.prefetch_related("category_images")
+    #     return CategoryImage.objects.filter(status="active").prefetch_related(
+    #         "category_images"
+    #     )

@@ -39,9 +39,9 @@ class ProductView(viewsets.ModelViewSet):
 
         # Replace old images with new 
         if images:
-            category.category_images.all().delete()
+            category.product_images.all().delete()
             for image in images:
-                category.category_images.create(image=image)
+                category.product_images.create(image=image)
 
         # add new without deleting old
         # for image in images:
