@@ -4,10 +4,11 @@ from .models import Products
 from .serializers import ProductSerializer
 from drf_spectacular.utils import extend_schema
 from .permissions import IsAdminOrReadOnly
+from .serializers import ProductImageSerializer
 
 
 @extend_schema(tags=["products"])
-class ProductView(viewsets.ModelViewSet):
+class ProductViewsets(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
     permission_classes = [IsAdminOrReadOnly]
@@ -27,16 +28,10 @@ class ProductView(viewsets.ModelViewSet):
         for image in images:
             category.product_images.create(image=image)
 
-    def perform_update(self, serializer):
-        images = self.request.FILES.getlist("images")
-        category = serializer.save()
+@extend_schema(tags=["product-images"])
+class productImageViewSet(viewsets.ModelViewSet):
+    serializer_class = ProductImageSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    queryset = Products.objects.all()
 
-        # replace old images with new images
-        if images:
-            category.product_images.all().delete()
-            for image in images:
-                category.product_images.create(image=image)
-
-        # add new images without deleting old images
-        # for image in images:
-        #     category.product_images.create(image=image)
+    http_method_names = [ 'put', 'delete']

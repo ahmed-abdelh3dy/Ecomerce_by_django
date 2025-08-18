@@ -28,17 +28,13 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         for image in images:
             category.category_images.create(image=image)
 
-    def perform_update(self, serializer):
-        images = self.request.FILES.getlist("images")
-        category = serializer.save()
 
-        # replace old images with new images
-        if images:
-            category.category_images.all().delete()
-            for image in images:
-                category.category_images.create(image=image)
 
-        # add new images without deleting old images
-        # for image in images:
-        #     category.category_images.create(image=image)
+@extend_schema(tags=["category-images"])
+class CategoryImageViewSet(viewsets.ModelViewSet):
+    serializer_class = CategoryImageSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    queryset = CategoryImage.objects.all()
+
+    http_method_names = [ 'put', 'delete']
 
