@@ -37,12 +37,12 @@ class ProductView(viewsets.ModelViewSet):
         images = self.request.FILES.getlist("images")
         category = serializer.save()
 
-        # Replace old images with new 
+        # replace old images with new images
         if images:
             category.product_images.all().delete()
             for image in images:
                 category.product_images.create(image=image)
 
-        # add new without deleting old
+        # add new images without deleting old images
         # for image in images:
         #     category.product_images.create(image=image)
