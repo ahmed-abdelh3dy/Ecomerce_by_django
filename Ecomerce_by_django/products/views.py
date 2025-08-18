@@ -45,4 +45,4 @@ class ProductView(viewsets.ModelViewSet):
 
         # add new without deleting old
         # for image in images:
-        #     category.category_images.create(image=image)
+        #     category.product_images.create(image=image)
