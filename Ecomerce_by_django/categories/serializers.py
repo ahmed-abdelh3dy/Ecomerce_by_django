@@ -9,7 +9,7 @@ class CategoryImageSerializer(serializers.ModelSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    images = CategoryImageSerializer(many=True, read_only=True)
+    images = CategoryImageSerializer( source = 'category_images' , many=True, read_only=True)
 
     class Meta:
         model = Categories

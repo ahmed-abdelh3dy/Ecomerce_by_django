@@ -9,13 +9,13 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'user', 'status', 'created_at', 'payment_method', 'total_price' ,'order_items' ]
-        read_only_fields = ['user', ]
+        read_only_fields = ['user', 'total_price' ]
 
     def get_fields(self):
         fields = super().get_fields()
         request = self.context.get('request')
 
-        if request.user.role != 'admin':
+        if request and getattr(request.user , 'role' , None) != 'admin':
             fields['status'].read_only = True
 
         return fields
