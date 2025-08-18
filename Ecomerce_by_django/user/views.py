@@ -31,7 +31,7 @@ class UserRegisterView(APIView):
             status=serializer.validated_data["status"],
             phone=serializer.validated_data["phone"],
             city=serializer.validated_data["city"],
-            address=serializer.validated_data["address"],            
+            address=serializer.validated_data["address"],
         )
 
         return Response({"User ": UserSerializer(user).data}, status=status.HTTP_200_OK)
@@ -48,15 +48,18 @@ class UserProfileView(APIView):
         orders_list = []
         for order in total_orders:
             serializer = OrderSerializer(order)
-            # print(serializer.data)
-            orders_list.append({
-                "order_id": serializer.data["id"], 
-                "status": serializer.data["status"],
+            orders_list.append(
+                {
+                    "order_id": serializer.data["id"],
+                    "status": serializer.data["status"],
+                    "total_price": serializer.data["total_price"],
+                }
+            )
 
-            })
-
-        return Response({
-            "Username": username,
-            "total_orders": total_orders.count(),
-            "orders": orders_list
-        })
+        return Response(
+            {
+                "username": username,
+                "total_orders": total_orders.count(),
+                "orders": orders_list,
+            }
+        )
