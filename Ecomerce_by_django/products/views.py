@@ -3,22 +3,16 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .models import Products
 from .serializers import ProductSerializer
 from drf_spectacular.utils import extend_schema
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from .permissions import IsAdmin
+from .permissions import IsAdminOrReadOnly
 
 
 @extend_schema(tags=["products"])
 class ProductView(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
+    permission_classes = [IsAdminOrReadOnly]
     filterset_fields = ["category", "tags", "name"]
 
-    def get_permissions(self):
-        if self.action in ["create", "update", "partial_update", "destroy"]:
-            return [IsAuthenticated(), IsAdmin()]
-        return [IsAuthenticated()]
 
     def get_queryset(self):
         if self.request.user.role == "admin":

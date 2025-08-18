@@ -1,22 +1,18 @@
 from rest_framework import viewsets, status
-from rest_framework.response import Response
 from .models import Categories
 from .models import CategoryImage
 from .serializers import CategorySerializer
 from .serializers import CategoryImageSerializer
-from rest_framework.permissions import IsAuthenticated
-from products.permissions import IsAdmin
+from products.permissions import IsAdminOrReadOnly
 from drf_spectacular.utils import extend_schema
 
 
 @extend_schema(tags=["categories"])
 class CategoriesViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
+    permission_classes = [IsAdminOrReadOnly]
 
-    def get_permissions(self):
-        if self.action in ["create", "update", "partial_update", "destroy"]:
-            return [IsAuthenticated(), IsAdmin()]
-        return [IsAuthenticated()]
+
 
     def get_queryset(self):
         if self.request.user.role == "admin":

@@ -6,9 +6,7 @@ from cart.models import Cart
 from .serializers import OrderSerializer
 from orderitems.models import OrderItems
 from drf_spectacular.utils import extend_schema
-from rest_framework.permissions import IsAuthenticated 
-from products.permissions import IsAdmin
-from .permissions import IsOwner
+from products.permissions import IsAdminOrReadOnly
 
 
 
@@ -16,12 +14,8 @@ from .permissions import IsOwner
 class OrderViewSets(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
+    permission_classes = [IsAdminOrReadOnly]
 
-
-    def get_permissions(self):
-        if self.action in ['update', 'partial_update' ]:
-            return [IsAuthenticated(), IsAdmin() ]
-        return [IsAuthenticated()]
     
     def get_queryset(self):
         if self.request.user.role == 'admin':
