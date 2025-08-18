@@ -19,38 +19,27 @@ class CartView(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-    # def perform_update(self, serializer):
-    #     instance = serializer.save()
-        
+    def partial_update(self, request, *args, **kwargs):
+        user = request.user
+        product_id = request.data.get("product")
+        quantity = request.data.get("quantity")
 
-    # def partial_update(self, request, *args, **kwargs):
-    #     user = request.user
-    #     cart_items = Cart.objects.filter(user=user)
-    #     quantity = request.data.get("quantity")
-    #     product_id = request.data.get("product")
+        cart_item = get_object_or_404(Cart, user=user, product_id=product_id)
 
-    #     if not cart_items.exists():
-    #         return Response(
-    #             {"detail": "Cart is empty"}, status=status.HTTP_400_BAD_REQUEST
-    #         )
+        product = cart_item.product
 
-    #     for item in cart_items:
+        updated_quantity = cart_item.quantity + quantity
 
-    #         cart_item = get_object_or_404(Cart , item.product.id != product_id) 
-                
-            
-    #         product_quantity = item.quantity
-    #         product = item.product
-    #         print(product_quantity)
+        if product.stock < updated_quantity:
+            return Response(
+                {"detail": f"Not enough stock for {product.name}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-    #         update_quantity = quantity + product_quantity
-    #         if product.stock < update_quantity:
-    #             return Response(
-    #                 {"detail": f"Not enough stock for {product.name}"},
-    #                 status=status.HTTP_400_BAD_REQUEST,
-    #             )
+        cart_item.quantity = quantity
+        cart_item.save()
 
-    #         cart_item.quantity = quantity
-    #         cart_item.save()
-
-    #     return Response({"quantity updated"}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"detail": f"Quantity updated to {cart_item.quantity}"},
+            status=status.HTTP_200_OK,
+        )

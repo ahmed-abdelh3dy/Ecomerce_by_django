@@ -22,7 +22,7 @@ class ProductView(viewsets.ModelViewSet):
         return [IsAuthenticated()]
 
     def get_queryset(self):
-        if getattr(self.request.user, 'role', None) == 'admin':
+        if self.request.user.role == 'admin':
             return Products.objects.all()
         return Products.objects.filter(stock__gt=0 , status = 'active')
 
@@ -41,9 +41,3 @@ class ProductView(viewsets.ModelViewSet):
             self.get_serializer(product).data, status=status.HTTP_201_CREATED
         )
 
-
-
-# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU1NTA0NjcyLCJpYXQiOjE3NTU0MTgyNzIsImp0aSI6ImRmMDhiZjNkYjlkNDQwMzU5Mjg1OWQ3OTc1ZWRiZjkyIiwidXNlcl9pZCI6IjMifQ.Ms27vWiW2jJfRkhTw8Wi6p9CEauTIrNDR3yGw3itnbo
-
-
-# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU1NTA0NzU5LCJpYXQiOjE3NTU0MTgzNTksImp0aSI6IjRmMzg0MjIxMzNlZjQwYjZiYmRjZGI3YzhmZTcwYmMyIiwidXNlcl9pZCI6IjQifQ.1brA37zTa7eD1mK4cMJWEKG36rt9fgnp2b46Q5egWBU

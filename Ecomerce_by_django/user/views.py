@@ -42,9 +42,21 @@ class UserProfileView(APIView):
     serializer_class = UserSerializer
 
     def get(self, request):
-
         username = request.user.username
         total_orders = request.user.user_orders.all()
+
+        orders_list = []
         for order in total_orders:
             serializer = OrderSerializer(order)
-        return Response({"Username is  ": username, "total  orders": total_orders.count() , 'order status':serializer.data['status'] })
+            # print(serializer.data)
+            orders_list.append({
+                "order_id": serializer.data["id"], 
+                "status": serializer.data["status"],
+
+            })
+
+        return Response({
+            "Username": username,
+            "total_orders": total_orders.count(),
+            "orders": orders_list
+        })

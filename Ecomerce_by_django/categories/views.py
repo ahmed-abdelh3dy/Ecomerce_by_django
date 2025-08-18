@@ -18,7 +18,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         return [IsAuthenticated()]
     
     def get_queryset(self):
-        if getattr(self.request.user, 'role', None) == 'admin':
+        if self.request.user.role == 'admin':
             return Categories.objects.all()
         return Categories.objects.filter( status = 'active')
 

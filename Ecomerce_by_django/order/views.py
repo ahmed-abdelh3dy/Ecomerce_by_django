@@ -24,7 +24,8 @@ class OrderViewSets(viewsets.ModelViewSet):
         return [IsAuthenticated()]
     
     def get_queryset(self):
-        if getattr(self.request.user, 'role', None) == 'admin':
+        if self.request.user.role == 'admin':
+            print(self.request.user.role)
             return Order.objects.all()
         return Order.objects.filter(  user = self.request.user )
 

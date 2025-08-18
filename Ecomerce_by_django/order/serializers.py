@@ -1,9 +1,21 @@
 from .models import Order
 from rest_framework import serializers
-
+from orderitems.serializers import OrderItemsSerializer
 
 class OrderSerializer(serializers.ModelSerializer):
+    order_items = OrderItemsSerializer(many=True, read_only=True)
+    user = serializers.CharField(source="user.username", read_only=True)
+
     class Meta:
         model = Order
-        fields = ['id' , 'user' , 'status' , 'created_at' , 'payment_method']
-        read_only_fields = ['user','status']
+        fields = ['id', 'user', 'status', 'created_at', 'payment_method', 'total_price' ,'order_items' ]
+        read_only_fields = ['user', ]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        request = self.context.get('request')
+
+        if request.user.role != 'admin':
+            fields['status'].read_only = True
+
+        return fields
