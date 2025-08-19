@@ -126,3 +126,11 @@ The project uses **Simple JWT** for authentication and **role-based access contr
 - **DELETE** `/api/orders/<id>`: Delete an order.  
 
 ---
+## 🎟️ Coupons
+
+- **GET** `   /api/coupons`: Retrieve all coupons.  
+- **GET** `   /api/coupons/<id>`: Retrieve a specific coupon.  
+- **POST** `  /api/coupons`:Create a new coupon.  
+- **PUT** `   /api/coupons/<id>`:Update an existing coupon.  
+- **DELETE** `/api/coupons/<id>`:Delete a coupon.  
+
