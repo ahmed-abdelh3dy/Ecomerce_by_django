@@ -8,8 +8,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ['id', 'user', 'status', 'created_at', 'payment_method', 'total_price' ,'order_items' ]
-        read_only_fields = ['user', 'total_price' ]
+        fields = ['id', 'user', 'status', 'created_at', 'payment_method', 'total_price' ,'order_items' , 'discount_value' ]
+        read_only_fields = ['user', 'total_price' ,'discount_value' ]
 
     def get_fields(self):
         fields = super().get_fields()
@@ -19,3 +19,5 @@ class OrderSerializer(serializers.ModelSerializer):
             fields['status'].read_only = True
 
         return fields
+    
+    

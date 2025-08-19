@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'products',
     'cart',
     'order',
+    'coupons',
     'orderitems',
     'drf_spectacular',
     'corsheaders',

@@ -32,7 +32,7 @@ class CartView(viewsets.ModelViewSet):
 
         if product.stock < updated_quantity:
             return Response(
-                {"detail": f"Not enough stock for {product.name}"},
+                {"message": f"Not enough stock for {product.name}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -40,6 +40,6 @@ class CartView(viewsets.ModelViewSet):
         cart_item.save()
 
         return Response(
-            {"detail": f"Quantity updated to {cart_item.quantity}"},
+            {"message": f"Quantity updated to {cart_item.quantity}"},
             status=status.HTTP_200_OK,
         )

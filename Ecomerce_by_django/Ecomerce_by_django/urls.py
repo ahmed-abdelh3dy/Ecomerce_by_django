@@ -28,6 +28,8 @@ urlpatterns = [
     path("api/", include("products.urls")),
     path("api/", include("cart.urls")),
     path("api/", include("order.urls")),
+    path("api/", include("coupons.urls")),
+
     # path("api/", include("orderitems.urls")),
 
     # swagger
