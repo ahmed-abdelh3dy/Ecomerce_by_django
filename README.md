@@ -56,20 +56,19 @@ The project uses **Simple JWT** for authentication and **role-based access contr
 
 ## 🗄️ Database Schema (ERD)
 
-| Users             | Categories        | Products          | Cart              | Orders                     | OrderItems           |
-|-------------------|------------------|------------------|------------------|----------------------------|----------------------|
-| id (pk)           | id (pk)          | id (pk)          | id (pk)          | id (pk)                    | id (pk)              |
-| name              | name             | name             | user_id (fk)     | user_id (fk)               | order_id (fk)        |
-| username          | description      | description      | product_id (fk)  | total_price                | product_id (fk)      |
-| email             | image (many)     | image (many)     | quantity         | created_at                 | quantity             |
-| password          | status           | status           | created_at       | payment_method             | price                |
-| phone             |                  | category_id (fk) |                   | status (pending/shipped/…) |                      |
-| role              |                  | stock            |                   |                            |                      |
-| status            |                  | tags             |                   |                            |                      |
-| city              |                  | price            |                   |                            |                      |
-| address           |                  |                  |                   |                            |                      |
+| Users             | Categories        | Products          | Cart              | Orders                     | OrderItems           | Coupons                          |
+|-------------------|------------------|------------------|------------------|----------------------------|----------------------|----------------------------------|
+| id (pk)           | id (pk)          | id (pk)          | id (pk)          | id (pk)                    | id (pk)              | id (pk)                          |
+| name              | name             | name             | user_id (fk)     | user_id (fk)               | order_id (fk)        | coupon                           |
+| username          | description      | description      | product_id (fk)  | total_price                | product_id (fk)      | discount_value                   |
+| email             | image (many)     | image (many)     | quantity         | created_at                 | quantity             | discount_type (fixed/percentage) |
+| password          | status           | status           | created_at       | payment_method             | price                | active                           |
+| phone             |                  | category_id (fk) |                   | status (pending/shipped/delivered) |                      |                                  |
+| role              |                  | stock            |                   | discount_value             |                      |                                  |
+| status            |                  | tags             |                   |                            |                      |                                  |
+| city              |                  | price            |                   |                            |                      |                                  |
+| address           |                  |                  |                   |                            |                      |                                  |
 
----
 
 ## 📌 API Endpoints
 
