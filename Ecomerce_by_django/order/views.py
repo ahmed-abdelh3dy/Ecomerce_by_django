@@ -40,22 +40,21 @@ class OrderViewSets(viewsets.ModelViewSet):
 
         with transaction.atomic():
             total_price = sum(item.product.price * item.quantity for item in cart_items)
-
             discount = 0
 
-        if coupon_code:
-            coupon = get_object_or_404(Coupons, coupon=coupon_code)
-            if coupon and coupon.active == True:
-                if coupon.discount_type == "percentage":
-                    discount = (total_price * coupon.discount_value) / 100
-                elif coupon.discount_type == "fixed":
-                    discount = coupon.discount_value
-
-                total_price -= discount
-            elif coupon and coupon.active == False:
-                return Response({"message": "coupon has been expired"})
-            else:
-                return Response({"message: the coupon not valid"})
+            if coupon_code:
+                coupon = get_object_or_404(Coupons, coupon=coupon_code)
+                if coupon.active:
+                    if coupon.discount_type == "percentage":
+                        discount = (total_price * coupon.discount_value) / 100
+                    elif coupon.discount_type == "fixed":
+                        discount = coupon.discount_value
+                    total_price -= discount
+                else:
+                    return Response(
+                        {"message": "Coupon has expired"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
             order = Order.objects.create(
                 user=user, total_price=total_price, discount_value=discount
@@ -63,13 +62,11 @@ class OrderViewSets(viewsets.ModelViewSet):
 
             for item in cart_items:
                 product = item.product
-
                 if product.stock < item.quantity:
                     return Response(
                         {"message": f"Not enough stock for {product.name}"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-
                 product.stock -= item.quantity
                 product.save()
 
@@ -80,7 +77,7 @@ class OrderViewSets(viewsets.ModelViewSet):
                     price=product.price,
                 )
 
-        cart_items.delete()
+            cart_items.delete()
 
         serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

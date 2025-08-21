@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
-from .models import Products
+from .models import Products , ProductImages
 from .serializers import ProductSerializer
 from drf_spectacular.utils import extend_schema
 from .permissions import IsAdminOrReadOnly
@@ -12,7 +12,8 @@ class ProductViewsets(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     filter_backends = [DjangoFilterBackend]
     permission_classes = [IsAdminOrReadOnly]
-    filterset_fields = ["category", "tags", "name"]
+    filterset_fields = ["category", "tags"]
+    search_fields = ["name", "description"]
 
 
     def get_queryset(self):
@@ -23,15 +24,15 @@ class ProductViewsets(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         images = self.request.FILES.getlist("images")
-        category = serializer.save()
+        product  = serializer.save()
 
         for image in images:
-            category.product_images.create(image=image)
+            product.product_images.create(image=image)
 
 @extend_schema(tags=["product-images"])
 class productImageViewSet(viewsets.ModelViewSet):
     serializer_class = ProductImageSerializer
     permission_classes = [IsAdminOrReadOnly]
-    queryset = Products.objects.all()
+    queryset = ProductImages.objects.all()
 
-    http_method_names = [ 'put', 'delete']
+    http_method_names = [ 'get','put', 'delete']

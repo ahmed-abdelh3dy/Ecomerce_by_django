@@ -7,7 +7,7 @@ class Categories(models.Model):
         ACTIVE = "active", "Active"
         INACTIVE = "inactive", "Inactive"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100 , unique=True)
     description = models.TextField()
     status = models.CharField(
         choices=Status.choices, default=Status.ACTIVE, max_length=10

@@ -13,7 +13,7 @@ class Products(models.Model):
         SALE = "sale", "Sale"
         NEW = "new", "New"
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100 , unique=True)
     description = models.TextField()
     stock = models.PositiveIntegerField()
     price = models.DecimalField(

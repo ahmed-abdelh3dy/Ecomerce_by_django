@@ -36,5 +36,5 @@ class CategoryImageViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminOrReadOnly]
     queryset = CategoryImage.objects.all()
 
-    http_method_names = [ 'put', 'delete']
+    http_method_names = ['get', 'put', 'delete']
 

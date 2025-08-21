@@ -17,7 +17,23 @@ class CartView(viewsets.ModelViewSet):
         return Cart.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        product = serializer.validated_data['product']
+        quantity = serializer.validated_data['quantity']
+
+        cart_item, created = Cart.objects.get_or_create(
+            user=self.request.user,
+            product=product,
+            defaults={'quantity': quantity}
+        )
+
+        if not created:  
+            new_quantity = cart_item.quantity + quantity
+            if new_quantity > product.stock:
+                raise serializer.ValidationError({
+                    "quantity": f"Requested quantity exceeds available stock"
+                })
+            cart_item.quantity = new_quantity
+            cart_item.save()
 
     def partial_update(self, request, *args, **kwargs):
         user = request.user

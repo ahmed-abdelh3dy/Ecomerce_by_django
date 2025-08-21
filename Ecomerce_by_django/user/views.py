@@ -7,6 +7,8 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from order.serializers import OrderSerializer
+from rest_framework import generics
+from products.permissions import IsAdminOrReadOnly
 
 
 class UserRegisterView(APIView):
@@ -63,3 +65,9 @@ class UserProfileView(APIView):
                 "orders": orders_list,
             }
         )
+
+
+
+
+
+ 
