@@ -37,3 +37,45 @@ class UserSerializer(serializers.ModelSerializer):
         except ValidationError as e:
             raise serializers.ValidationError(e.messages)
         return value
+
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomeUser
+        fields = [
+            "id",
+            "name",
+            "username",
+            "email",
+            "password",
+            "status",
+            "role",
+            "city",
+            "address",
+            "phone",
+        ]
+        read_only_fields= ['email' , 'username' , 'password' , 'status' , 'role']
+
+
+class UpdateUserRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomeUser
+        fields = [
+            "status",
+            "role"
+        ]
+
+    def get_fields(self):
+        fields =  super().get_fields()   
+        request = self.context.get('request')
+
+        if request and getattr(request.user , 'role' , None) != 'admin':
+            fields['status'].read_only = True
+            fields['role'].read_only = True
+
+
+        return fields
+    
+
+

@@ -1,4 +1,4 @@
-from .serializers import UserSerializer
+from .serializers import UserSerializer , ProfileSerializer , UpdateUserRoleSerializer
 from .models import CustomeUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -67,7 +67,29 @@ class UserProfileView(APIView):
         )
 
 
+class UpdateProfileView(generics.RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProfileSerializer
+    queryset = CustomeUser.objects.all()
 
+    def get_object(self):
+            return self.request.user
+    
+    http_method_names = ['get' , 'put']        
+
+    
+
+
+class UpdateUserRoleView(generics.UpdateAPIView):
+    permission_classes = [IsAdminOrReadOnly]
+    serializer_class = UpdateUserRoleSerializer
+    queryset = CustomeUser.objects.all()
+
+    def put(self , request, *args, **kwargs):
+        return self.update(request ,*args, **kwargs )
+            
+    http_method_names = ['put']        
+    
 
 
  
