@@ -1,4 +1,4 @@
-from rest_framework import viewsets
+from rest_framework import viewsets , filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Products , ProductImages
 from .serializers import ProductSerializer
@@ -10,7 +10,8 @@ from .serializers import ProductImageSerializer
 @extend_schema(tags=["products"])
 class ProductViewsets(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
-    filter_backends = [DjangoFilterBackend]
+    queryset = Products.objects.all()
+    filter_backends = [DjangoFilterBackend ,filters.SearchFilter]
     permission_classes = [IsAdminOrReadOnly]
     filterset_fields = ["category", "tags"]
     search_fields = ["name", "description"]

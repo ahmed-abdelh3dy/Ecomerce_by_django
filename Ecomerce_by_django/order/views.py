@@ -6,8 +6,8 @@ from cart.models import Cart
 from .serializers import OrderSerializer
 from orderitems.models import OrderItems
 from drf_spectacular.utils import extend_schema
-from .permissions import IsAdmin
-from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdmin ,IsOwner
+from rest_framework.permissions import IsAuthenticated 
 from rest_framework.exceptions import PermissionDenied
 from coupons.models import Coupons
 from django.shortcuts import get_object_or_404
@@ -21,7 +21,10 @@ class OrderViewSets(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action in ["update", "partial_update"]:
             return [IsAuthenticated(), IsAdmin()]
-        return [IsAuthenticated()]
+        elif self.action in ["destroy"]:
+            return [IsAuthenticated(), IsOwner()]
+        else:    
+            return [IsAuthenticated()]
 
     def get_queryset(self):
         if self.request.user.role == "admin":
@@ -82,8 +85,8 @@ class OrderViewSets(viewsets.ModelViewSet):
         serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def perform_destroy(self, instance):
-        user = self.request.user
-        if instance.user != user:
-            raise PermissionDenied("You can only delete your own orders.")
-        instance.delete()
+    # def perform_destroy(self, instance):
+    #     user = self.request.user
+    #     if instance.user != user:
+    #         raise PermissionDenied("You can only delete your own orders.")
+    #     instance.delete()
