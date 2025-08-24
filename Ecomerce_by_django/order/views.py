@@ -6,8 +6,8 @@ from cart.models import Cart
 from .serializers import OrderSerializer
 from orderitems.models import OrderItems
 from drf_spectacular.utils import extend_schema
-from .permissions import IsAdmin ,IsOwner
-from rest_framework.permissions import IsAuthenticated 
+from .permissions import IsAdmin, IsOwner
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from coupons.models import Coupons
 from django.shortcuts import get_object_or_404
@@ -23,7 +23,7 @@ class OrderViewSets(viewsets.ModelViewSet):
             return [IsAuthenticated(), IsAdmin()]
         elif self.action in ["destroy"]:
             return [IsAuthenticated(), IsOwner()]
-        else:    
+        else:
             return [IsAuthenticated()]
 
     def get_queryset(self):
@@ -52,7 +52,14 @@ class OrderViewSets(viewsets.ModelViewSet):
                         discount = (total_price * coupon.discount_value) / 100
                     elif coupon.discount_type == "fixed":
                         discount = coupon.discount_value
-                    total_price -= discount
+                        
+                    if discount > total_price:
+                        discount = total_price
+                        total_price = 0
+                    else:
+                        discount = discount
+                        total_price -= discount
+
                 else:
                     return Response(
                         {"message": "Coupon has expired"},
