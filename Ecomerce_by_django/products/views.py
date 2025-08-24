@@ -42,3 +42,20 @@ class productImageViewSet(viewsets.ModelViewSet):
         return ProductImages.objects.filter(product=self.kwargs.get("product_pk"))
 
     http_method_names = ["get", "put", "delete"]
+
+    # metho one
+    def get_queryset(self):
+        if self.request.user.role == "admin":
+            return Products.objects.prefetch_related("product_images")
+        return Products.objects.filter(stock__gt=0, status="active").prefetch_related(
+            "product_images"
+        )
+
+    # method two
+    def get_queryset(self):
+        role = getattr(self.request.user, "role", None)
+        if role == "admin":
+            return Products.objects.prefetch_related("product_images")
+        return Products.objects.filter(stock__gt=0, status="active").prefetch_related(
+            "product_images"
+        )
