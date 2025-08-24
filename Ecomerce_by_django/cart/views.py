@@ -6,6 +6,8 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
+
 
 
 @extend_schema(tags=["carts"])
@@ -27,12 +29,11 @@ class CartView(viewsets.ModelViewSet):
         )
 
         if not created:  
-            new_quantity = cart_item.quantity + quantity
-            if new_quantity > product.stock:
-                raise serializer.ValidationError({
+            cart_item.quantity += quantity
+            if cart_item.quantity > product.stock:
+                raise ValidationError({
                     "quantity": f"Requested quantity exceeds available stock"
                 })
-            cart_item.quantity = new_quantity
             cart_item.save()
 
     def partial_update(self, request, *args, **kwargs):

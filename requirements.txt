@@ -6,3 +6,4 @@ drf-spectacular
 django-password-validators
 Pillow
 django-filter
+drf-nested-routers

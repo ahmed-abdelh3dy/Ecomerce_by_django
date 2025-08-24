@@ -47,15 +47,11 @@ class ProfileSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "username",
-            "email",
-            "password",
-            "status",
-            "role",
             "city",
             "address",
             "phone",
         ]
-        read_only_fields= ['email' , 'username' , 'password' , 'status' , 'role']
+        read_only_fields= ['email'  , 'password' , 'status' , 'role']
 
 
 class UpdateUserRoleSerializer(serializers.ModelSerializer):

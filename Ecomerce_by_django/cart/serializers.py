@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Cart
+from rest_framework.exceptions import ValidationError
 
 
 
@@ -15,7 +16,7 @@ class CartSerializer(serializers.ModelSerializer):
         product = data['product']
         quantity = data['quantity']
         if quantity > product.stock:
-            raise serializers.ValidationError({
+            raise ValidationError({
                 "quantity": f"Requested quantity ({quantity}) exceeds available stock ({product.stock})"
             })
         return data    

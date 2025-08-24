@@ -12,10 +12,9 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = [IsAdminOrReadOnly]
 
-
-
     def get_queryset(self):
-        if self.request.user.role == "admin":
+        role = getattr(self.request.user, "role", None)
+        if role == "admin":
             return Categories.objects.prefetch_related("category_images")
         return Categories.objects.filter(status="active").prefetch_related(
             "category_images"
@@ -29,12 +28,12 @@ class CategoriesViewSet(viewsets.ModelViewSet):
             category.category_images.create(image=image)
 
 
-
 @extend_schema(tags=["category-images"])
 class CategoryImageViewSet(viewsets.ModelViewSet):
     serializer_class = CategoryImageSerializer
     permission_classes = [IsAdminOrReadOnly]
-    queryset = CategoryImage.objects.all()
 
-    http_method_names = ['get', 'put', 'delete']
+    def get_queryset(self):
+        return CategoryImage.objects.filter(category=self.kwargs.get("category_pk"))
 
+    http_method_names = ["get", "put", "delete"]

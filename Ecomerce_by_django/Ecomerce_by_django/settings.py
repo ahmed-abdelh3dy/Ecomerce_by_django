@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'coupons',
     'orderitems',
     'drf_spectacular',
+    'django_filters',
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework',
