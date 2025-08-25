@@ -5,6 +5,9 @@ from .serializers import ProductSerializer
 from drf_spectacular.utils import extend_schema
 from .permissions import IsAdminOrReadOnly
 from .serializers import ProductImageSerializer
+from categories.models import Categories
+from django.shortcuts import get_object_or_404
+from rest_framework.exceptions import ValidationError
 
 
 @extend_schema(tags=["products"])
@@ -25,11 +28,17 @@ class ProductViewsets(viewsets.ModelViewSet):
         )
 
     def perform_create(self, serializer):
-        images = self.request.FILES.getlist("images")
-        product = serializer.save()
+        category = get_object_or_404(Categories, id=self.request.data.get("category"))
+        if category.status == "inactive":
+            raise ValidationError(
+                {"message": "you cant create products for this category "}
+            )
+        else:
+            images = self.request.FILES.getlist("images")
+            product = serializer.save()
 
-        for image in images:
-            product.product_images.create(image=image)
+            for image in images:
+                product.product_images.create(image=image)
 
 
 @extend_schema(tags=["product-images"])
@@ -43,19 +52,3 @@ class productImageViewSet(viewsets.ModelViewSet):
 
     http_method_names = ["get", "put", "delete"]
 
-    # metho one
-    def get_queryset(self):
-        if self.request.user.role == "admin":
-            return Products.objects.prefetch_related("product_images")
-        return Products.objects.filter(stock__gt=0, status="active").prefetch_related(
-            "product_images"
-        )
-
-    # method two
-    def get_queryset(self):
-        role = getattr(self.request.user, "role", None)
-        if role == "admin":
-            return Products.objects.prefetch_related("product_images")
-        return Products.objects.filter(stock__gt=0, status="active").prefetch_related(
-            "product_images"
-        )

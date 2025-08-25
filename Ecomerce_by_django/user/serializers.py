@@ -21,6 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
             "phone",
         ]
         extra_kwargs = {"password": {"write_only": True}}
+        read_only_fields = ['role' , 'status']
 
     def validate_username(self, value):
         if not re.match(r"^[a-zA-Z0-9_]+$", value):
