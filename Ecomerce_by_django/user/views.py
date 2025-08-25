@@ -19,27 +19,15 @@ class UserRegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
 
-        if not serializer.is_valid():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        password = serializer.validated_data["password"]
-
-        user = CustomeUser.objects.create_user(
-            name=serializer.validated_data["name"],
-            username=serializer.validated_data["username"],
-            email=serializer.validated_data["email"],
-            password=password,
-            role=serializer.validated_data["role"],
-            status=serializer.validated_data["status"],
-            phone=serializer.validated_data["phone"],
-            city=serializer.validated_data["city"],
-            address=serializer.validated_data["address"],
-        )
-
-        return Response({"User ": UserSerializer(user).data}, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'user':serializer.data} , 201)
+        return Response({'erorr':serializer.errors} , 400)
 
 
-class UserProfileView(APIView):
+
+
+class UserOrderDetailView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
 

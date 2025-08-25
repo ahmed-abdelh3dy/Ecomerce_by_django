@@ -14,14 +14,11 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "password",
-            "status",
-            "role",
             "city",
             "address",
             "phone",
         ]
         extra_kwargs = {"password": {"write_only": True}}
-        read_only_fields = ['role' , 'status']
 
     def validate_username(self, value):
         if not re.match(r"^[a-zA-Z0-9_]+$", value):
@@ -38,6 +35,11 @@ class UserSerializer(serializers.ModelSerializer):
         except ValidationError as e:
             raise serializers.ValidationError(e.messages)
         return value
+    
+    def create(self, validated_data):
+        password = validated_data.pop("password")
+        user = CustomeUser.objects.create_user(password=password, **validated_data)
+        return user
 
 
 
@@ -63,16 +65,6 @@ class UpdateUserRoleSerializer(serializers.ModelSerializer):
             "role"
         ]
 
-    def get_fields(self):
-        fields =  super().get_fields()   
-        request = self.context.get('request')
-
-        if request and getattr(request.user , 'role' , None) != 'admin':
-            fields['status'].read_only = True
-            fields['role'].read_only = True
-
-
-        return fields
     
 
 
